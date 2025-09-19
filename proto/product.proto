@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package product;
+
+// Product service definition
+service ProductService {
+  // Create a new product
+  rpc CreateProduct (CreateProductRequest) returns (ProductResponse);
+  
+  // Get product by ID
+  rpc GetProduct (GetProductRequest) returns (ProductResponse);
+  
+  // List all products
+  rpc ListProducts (ListProductsRequest) returns (ListProductsResponse);
+  
+  // Update product
+  rpc UpdateProduct (UpdateProductRequest) returns (ProductResponse);
+  
+  // Delete product
+  rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductResponse);
+  
+  // Check product stock
+  rpc CheckStock (CheckStockRequest) returns (CheckStockResponse);
+}
+
+// Messages
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  string currency = 5;
+  string sku = 6;
+  int32 stock = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string description = 2;
+  double price = 3;
+  string currency = 4;
+  string sku = 5;
+  int32 stock = 6;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message ListProductsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string search = 3;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message UpdateProductRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  string currency = 5;
+  string sku = 6;
+  int32 stock = 7;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+
+message DeleteProductResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message CheckStockRequest {
+  string id = 1;
+  int32 quantity = 2;
+}
+
+message CheckStockResponse {
+  bool available = 1;
+  int32 current_stock = 2;
+  string message = 3;
+}
+
+message ProductResponse {
+  Product product = 1;
+}
