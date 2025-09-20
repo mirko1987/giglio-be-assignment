@@ -25,9 +25,12 @@
       "@/presentation/*": ["src/presentation/*"]
     }
   },
-  "exclude": [
-    "test_disabled/**/*",
+  "include": [
+    "src/**/*",
     "test/**/*"
+  ],
+  "exclude": [
+    "test_disabled/**/*"
   ]
 }
 

@@ -11,7 +11,7 @@ import { Product } from '../../../../src/domain/entities/product.entity';
 import { OrderItem } from '../../../../src/domain/entities/order-item.entity';
 import { Money } from '../../../../src/domain/value-objects/money';
 import { Email } from '../../../../src/domain/value-objects/email';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 describe('CreateOrderUseCase', () => {
   let useCase: CreateOrderUseCase;
@@ -66,24 +66,24 @@ describe('CreateOrderUseCase', () => {
       providers: [
         CreateOrderUseCase,
         {
-        provide: 'OrderRepositoryPort',
-        useValue: mockOrderRepository,
+          provide: 'OrderRepositoryPort',
+          useValue: mockOrderRepository,
         },
         {
-        provide: 'UserRepositoryPort',
-        useValue: mockUserRepository,
+          provide: 'UserRepositoryPort',
+          useValue: mockUserRepository,
         },
         {
-        provide: 'ProductRepositoryPort',
-        useValue: mockProductRepository,
+          provide: 'ProductRepositoryPort',
+          useValue: mockProductRepository,
         },
         {
-        provide: 'EventPublisherPort',
-        useValue: mockEventPublisher,
+          provide: 'EventPublisherPort',
+          useValue: mockEventPublisher,
         },
         {
-        provide: 'NotificationPort',
-        useValue: mockNotificationService,
+          provide: 'NotificationPort',
+          useValue: mockNotificationService,
         },
       ],
     }).compile();
@@ -105,7 +105,7 @@ describe('CreateOrderUseCase', () => {
         'Test Description',
         new Money(29.99, 'USD'),
         'TEST-SKU-001',
-        10
+        10,
       );
       const orderItem = OrderItem.create(product, 2, new Money(29.99, 'USD'));
       const order = Order.create(user, [orderItem]);
@@ -134,7 +134,7 @@ describe('CreateOrderUseCase', () => {
           // Assert
           expect(response.orderId).toBe(order.id);
           expect(response.userId).toBe(user.id);
-          expect(response.totalAmount).toBe('USD 59.98');
+          expect(response.totalAmount).toBe(59.98);
           expect(response.status).toBe('PENDING');
           expect(userRepository.findById).toHaveBeenCalledWith(user.id);
           expect(productRepository.findById).toHaveBeenCalledWith(product.id);
@@ -142,7 +142,7 @@ describe('CreateOrderUseCase', () => {
           expect(eventPublisher.publishMany).toHaveBeenCalled();
           expect(notificationService.sendOrderConfirmation).toHaveBeenCalledWith(
             user.email.value,
-            order.id
+            order.id,
           );
           done();
         },
@@ -171,7 +171,7 @@ describe('CreateOrderUseCase', () => {
         next: () => done(new Error('Should have thrown an error')),
         error: (error) => {
           // Assert
-          expect(error.message).toContain('Customer with ID non-existent-customer-id not found');
+          expect(error.message).toContain('User with ID non-existent-customer-id not found');
           done();
         },
       });
@@ -214,7 +214,7 @@ describe('CreateOrderUseCase', () => {
         'Test Description',
         new Money(29.99, 'USD'),
         'TEST-SKU-001',
-        1 // Only 1 in stock
+        1, // Only 1 in stock
       );
       const request = {
         userId: user.id,
@@ -244,10 +244,14 @@ describe('CreateOrderUseCase', () => {
 
     it('should throw error when order has no items', (done) => {
       // Arrange
+      const user = User.create(new Email('test@example.com'), 'Test User');
       const request = {
-        userId: 'customer-id',
+        userId: user.id,
         items: [],
       };
+
+      // Mock setup - user exists but items array is empty
+      userRepository.findById.mockReturnValue(of(user));
 
       // Act
       useCase.execute(request).subscribe({
@@ -261,4 +265,3 @@ describe('CreateOrderUseCase', () => {
     });
   });
 });
-

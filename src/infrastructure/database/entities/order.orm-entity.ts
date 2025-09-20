@@ -1,4 +1,13 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { UserOrmEntity } from './user.orm-entity';
 import { OrderItemOrmEntity } from './order-item.orm-entity';
 
@@ -29,7 +38,6 @@ export class OrderOrmEntity {
   @JoinColumn({ name: 'userId' })
   user: UserOrmEntity;
 
-  @OneToMany(() => OrderItemOrmEntity, item => item.order, { cascade: true, eager: true })
+  @OneToMany(() => OrderItemOrmEntity, (item) => item.order, { cascade: true, eager: true })
   items: OrderItemOrmEntity[];
 }
-

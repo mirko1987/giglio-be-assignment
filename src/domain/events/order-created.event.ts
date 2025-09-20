@@ -8,7 +8,7 @@ export class OrderCreatedEvent extends DomainEvent {
     public readonly totalAmount: Money,
     public readonly customerId?: string, // For backward compatibility
     public readonly customerName?: string,
-    public readonly customerEmail?: string
+    public readonly customerEmail?: string,
   ) {
     super('OrderCreated');
   }

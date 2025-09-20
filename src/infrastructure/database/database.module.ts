@@ -28,14 +28,8 @@ import { ProductOrmEntity } from './entities/product.orm-entity';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([
-      OrderOrmEntity,
-      OrderItemOrmEntity,
-      UserOrmEntity,
-      ProductOrmEntity,
-    ]),
+    TypeOrmModule.forFeature([OrderOrmEntity, OrderItemOrmEntity, UserOrmEntity, ProductOrmEntity]),
   ],
   exports: [TypeOrmModule],
 })
 export class DatabaseModule {}
-

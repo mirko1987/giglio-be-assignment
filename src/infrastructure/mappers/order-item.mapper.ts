@@ -19,12 +19,6 @@ export class OrderItemMapper {
     const product = ProductMapper.toDomainEntity(orderItemOrm.product);
     const unitPrice = new Money(orderItemOrm.unitPrice, orderItemOrm.currency);
 
-    return new OrderItem(
-      orderItemOrm.id,
-      product,
-      orderItemOrm.quantity,
-      unitPrice
-    );
+    return new OrderItem(orderItemOrm.id, product, orderItemOrm.quantity, unitPrice);
   }
 }
-

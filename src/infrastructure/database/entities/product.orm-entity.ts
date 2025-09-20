@@ -29,4 +29,3 @@ export class ProductOrmEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-

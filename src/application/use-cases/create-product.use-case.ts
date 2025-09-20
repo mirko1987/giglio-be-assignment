@@ -28,25 +28,25 @@ export interface CreateProductResponse {
 @Injectable()
 export class CreateProductUseCase {
   constructor(
-    @Inject('ProductRepositoryPort') private readonly productRepository: ProductRepositoryPort
+    @Inject('ProductRepositoryPort') private readonly productRepository: ProductRepositoryPort,
   ) {}
 
   execute(request: CreateProductRequest): Observable<CreateProductResponse> {
     return this.validateSkuUniqueness(request.sku).pipe(
       switchMap(() => this.createProduct(request)),
-      switchMap(product => this.saveProduct(product)),
-      switchMap(product => of(this.mapToResponse(product)))
+      switchMap((product) => this.saveProduct(product)),
+      switchMap((product) => of(this.mapToResponse(product))),
     );
   }
 
   private validateSkuUniqueness(sku: string): Observable<void> {
     return this.productRepository.findBySku(sku).pipe(
-      switchMap(existingProduct => {
+      switchMap((existingProduct) => {
         if (existingProduct) {
           return throwError(() => new Error(`Product with SKU ${sku} already exists`));
         }
         return of(void 0);
-      })
+      }),
     );
   }
 
@@ -58,7 +58,7 @@ export class CreateProductUseCase {
         request.description,
         price,
         request.sku,
-        request.stock
+        request.stock,
       );
       return of(product);
     } catch (error) {
@@ -80,8 +80,7 @@ export class CreateProductUseCase {
       sku: product.sku,
       stock: product.stock,
       createdAt: product.createdAt,
-      updatedAt: product.updatedAt
+      updatedAt: product.updatedAt,
     };
   }
 }
-

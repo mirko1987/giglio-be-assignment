@@ -68,7 +68,9 @@ export class Money {
 
   private ensureSameCurrency(other: Money): void {
     if (this._currency !== other._currency) {
-      throw new Error(`Cannot operate on different currencies: ${this._currency} and ${other._currency}`);
+      throw new Error(
+        `Cannot operate on different currencies: ${this._currency} and ${other._currency}`,
+      );
     }
   }
 
@@ -79,7 +81,7 @@ export class Money {
   toJSON() {
     return {
       amount: this._amount,
-      currency: this._currency
+      currency: this._currency,
     };
   }
 }

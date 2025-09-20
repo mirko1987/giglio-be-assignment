@@ -1,6 +1,6 @@
 import { Controller, Inject } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { Observable, map, catchError, throwError, of } from 'rxjs';
+import { Observable, map, catchError } from 'rxjs';
 import { CreateUserUseCase } from '../../application/use-cases/create-user.use-case';
 import { UserRepositoryPort } from '../../application/ports/user.repository.port';
 import { RpcException } from '@nestjs/microservices';
@@ -25,11 +25,11 @@ interface ListUsersRequest {
   limit?: number;
 }
 
-interface UpdateUserRequest {
-  id: string;
-  name?: string;
-  email?: string;
-}
+// interface UpdateUserRequest {
+//   id: string;
+//   name?: string;
+//   email?: string;
+// }
 
 interface DeleteUserRequest {
   id: string;
@@ -65,40 +65,42 @@ interface DeleteUserResponse {
 export class UserGrpcController {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
-    @Inject('UserRepositoryPort') private readonly userRepository: UserRepositoryPort
+    @Inject('UserRepositoryPort') private readonly userRepository: UserRepositoryPort,
   ) {}
 
   @GrpcMethod('UserService', 'CreateUser')
   createUser(request: CreateUserRequest): Observable<UserResponse> {
-    return this.createUserUseCase.execute({
-      name: request.name,
-      email: request.email
-    }).pipe(
-      map(response => ({
-        user: {
-          id: response.userId,
-          name: response.name,
-          email: response.email,
-          created_at: response.createdAt.toISOString()
-        }
-      })),
-      catchError(error => {
-        throw new RpcException({
-          code: status.INVALID_ARGUMENT,
-          message: error.message
-        });
+    return this.createUserUseCase
+      .execute({
+        name: request.name,
+        email: request.email,
       })
-    );
+      .pipe(
+        map((response) => ({
+          user: {
+            id: response.userId,
+            name: response.name,
+            email: response.email,
+            created_at: response.createdAt.toISOString(),
+          },
+        })),
+        catchError((error) => {
+          throw new RpcException({
+            code: status.INVALID_ARGUMENT,
+            message: error.message,
+          });
+        }),
+      );
   }
 
   @GrpcMethod('UserService', 'GetUser')
   getUser(request: GetUserRequest): Observable<UserResponse> {
     return this.userRepository.findById(request.id).pipe(
-      map(user => {
+      map((user) => {
         if (!user) {
           throw new RpcException({
             code: status.NOT_FOUND,
-            message: `User with ID ${request.id} not found`
+            message: `User with ID ${request.id} not found`,
           });
         }
         return {
@@ -106,27 +108,27 @@ export class UserGrpcController {
             id: user.id,
             name: user.name,
             email: user.email.value,
-            created_at: user.createdAt.toISOString()
-          }
+            created_at: user.createdAt.toISOString(),
+          },
         };
       }),
-      catchError(error => {
+      catchError((error) => {
         throw new RpcException({
           code: status.INTERNAL,
-          message: error.message
+          message: error.message,
         });
-      })
+      }),
     );
   }
 
   @GrpcMethod('UserService', 'GetUserByEmail')
   getUserByEmail(request: GetUserByEmailRequest): Observable<UserResponse> {
     return this.userRepository.findByEmail(request.email).pipe(
-      map(user => {
+      map((user) => {
         if (!user) {
           throw new RpcException({
             code: status.NOT_FOUND,
-            message: `User with email ${request.email} not found`
+            message: `User with email ${request.email} not found`,
           });
         }
         return {
@@ -134,16 +136,16 @@ export class UserGrpcController {
             id: user.id,
             name: user.name,
             email: user.email.value,
-            created_at: user.createdAt.toISOString()
-          }
+            created_at: user.createdAt.toISOString(),
+          },
         };
       }),
-      catchError(error => {
+      catchError((error) => {
         throw new RpcException({
           code: status.INTERNAL,
-          message: error.message
+          message: error.message,
         });
-      })
+      }),
     );
   }
 
@@ -153,23 +155,23 @@ export class UserGrpcController {
     const limit = request.limit || 10;
 
     return this.userRepository.findAll().pipe(
-      map(users => ({
-        users: users.map(user => ({
+      map((users) => ({
+        users: users.map((user) => ({
           id: user.id,
           name: user.name,
           email: user.email.value,
-          created_at: user.createdAt.toISOString()
+          created_at: user.createdAt.toISOString(),
         })),
         total: users.length,
         page: page,
-        limit: limit
+        limit: limit,
       })),
-      catchError(error => {
+      catchError((error) => {
         throw new RpcException({
           code: status.INTERNAL,
-          message: error.message
+          message: error.message,
         });
-      })
+      }),
     );
   }
 
@@ -178,14 +180,14 @@ export class UserGrpcController {
     return this.userRepository.delete(request.id).pipe(
       map(() => ({
         success: true,
-        message: `User with ID ${request.id} deleted successfully`
+        message: `User with ID ${request.id} deleted successfully`,
       })),
-      catchError(error => {
+      catchError((error) => {
         throw new RpcException({
           code: status.INTERNAL,
-          message: error.message
+          message: error.message,
         });
-      })
+      }),
     );
   }
 }

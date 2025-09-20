@@ -25,31 +25,15 @@ import { GetOrderUseCase } from '../../application/use-cases/get-order.use-case'
 import { ListOrdersUseCase } from '../../application/use-cases/list-orders.use-case';
 import { UpdateOrderStatusUseCase } from '../../application/use-cases/update-order-status.use-case';
 
-// Import port tokens
-import { UserRepositoryPort } from '../../application/ports/user.repository.port';
-import { ProductRepositoryPort } from '../../application/ports/product.repository.port';
-import { OrderRepositoryPort } from '../../application/ports/order.repository.port';
-import { EventPublisherPort } from '../../application/ports/event-publisher.port';
-import { NotificationPort } from '../../application/ports/notification.port';
-
 // Import infrastructure services
 import { EventPublisherAdapter } from '../../infrastructure/services/event-publisher.adapter';
 import { NotificationAdapter } from '../../infrastructure/services/notification.adapter';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      UserOrmEntity,
-      ProductOrmEntity,
-      OrderOrmEntity,
-      OrderItemOrmEntity,
-    ]),
+    TypeOrmModule.forFeature([UserOrmEntity, ProductOrmEntity, OrderOrmEntity, OrderItemOrmEntity]),
   ],
-  controllers: [
-    UserGrpcController,
-    ProductGrpcController,
-    OrderGrpcController,
-  ],
+  controllers: [UserGrpcController, ProductGrpcController, OrderGrpcController],
   providers: [
     // Repository providers
     {
@@ -64,7 +48,7 @@ import { NotificationAdapter } from '../../infrastructure/services/notification.
       provide: 'OrderRepositoryPort',
       useClass: OrderRepositoryAdapter,
     },
-    
+
     // Service providers
     {
       provide: 'EventPublisherPort',
@@ -74,7 +58,7 @@ import { NotificationAdapter } from '../../infrastructure/services/notification.
       provide: 'NotificationPort',
       useClass: NotificationAdapter,
     },
-    
+
     // Use case providers
     CreateUserUseCase,
     CreateProductUseCase,

@@ -5,4 +5,3 @@ export interface EventPublisherPort {
   publish(event: DomainEvent): Observable<void>;
   publishMany(events: DomainEvent[]): Observable<void>;
 }
-

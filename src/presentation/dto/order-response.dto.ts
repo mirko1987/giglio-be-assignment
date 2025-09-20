@@ -11,10 +11,13 @@ export class OrderItemResponseDto {
   quantity: number;
 
   @ApiProperty({ description: 'Unit price' })
-  unitPrice: string;
+  unitPrice: number;
 
   @ApiProperty({ description: 'Subtotal' })
-  subtotal: string;
+  subtotal: number;
+
+  @ApiProperty({ description: 'Currency' })
+  currency: string;
 }
 
 export class OrderResponseDto {
@@ -34,7 +37,10 @@ export class OrderResponseDto {
   items: OrderItemResponseDto[];
 
   @ApiProperty({ description: 'Total amount' })
-  totalAmount: string;
+  totalAmount: number;
+
+  @ApiProperty({ description: 'Currency' })
+  currency: string;
 
   @ApiProperty({ description: 'Order status' })
   status: string;
@@ -56,8 +62,17 @@ export class OrderSummaryResponseDto {
   @ApiProperty({ description: 'Customer name' })
   customerName: string;
 
+  @ApiProperty({ description: 'Customer email' })
+  customerEmail: string;
+
+  @ApiProperty({ description: 'Order items', type: [OrderItemResponseDto] })
+  items: OrderItemResponseDto[];
+
   @ApiProperty({ description: 'Total amount' })
-  totalAmount: string;
+  totalAmount: number;
+
+  @ApiProperty({ description: 'Currency' })
+  currency: string;
 
   @ApiProperty({ description: 'Order status' })
   status: string;
@@ -82,4 +97,3 @@ export class OrderListResponseDto {
   @ApiProperty({ description: 'Offset' })
   offset: number;
 }
-

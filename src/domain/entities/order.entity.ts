@@ -19,11 +19,11 @@ export class Order {
     items: OrderItem[],
     status?: OrderStatusVO,
     createdAt?: Date,
-    updatedAt?: Date
+    updatedAt?: Date,
   ) {
     this._id = id;
     this._user = user;
-    this._items = [...items];
+    this._items = items ? [...items] : [];
     this._status = status || new OrderStatusVO(OrderStatus.PENDING);
     this._createdAt = createdAt || new Date();
     this._updatedAt = updatedAt || new Date();
@@ -34,14 +34,14 @@ export class Order {
   static create(user: User, items: OrderItem[]): Order {
     const id = crypto.randomUUID();
     const order = new Order(id, user, items);
-    
+
     // Add domain event
     order.addDomainEvent({
       type: 'OrderCreated',
       orderId: order._id,
       userId: user.id,
       totalAmount: order.getTotalAmount(),
-      occurredAt: new Date()
+      occurredAt: new Date(),
     });
 
     return order;
@@ -80,14 +80,17 @@ export class Order {
       return new Money(0, 'USD');
     }
 
-    return this._items.reduce((total, item) => {
-      return total.add(item.getSubtotal());
-    }, new Money(0, this._items[0].unitPrice.currency));
+    return this._items.reduce(
+      (total, item) => {
+        return total.add(item.getSubtotal());
+      },
+      new Money(0, this._items[0].unitPrice.currency),
+    );
   }
 
   changeStatus(newStatus: OrderStatus): void {
     const newStatusVO = new OrderStatusVO(newStatus);
-    
+
     if (!this._status.canTransitionTo(newStatus)) {
       throw new Error(`Cannot transition from ${this._status.value} to ${newStatus}`);
     }
@@ -102,14 +105,14 @@ export class Order {
       orderId: this._id,
       oldStatus: oldStatus,
       newStatus: newStatus,
-      occurredAt: new Date()
+      occurredAt: new Date(),
     });
   }
 
   addItem(item: OrderItem): void {
     // Check if item with same product already exists
     const existingItemIndex = this._items.findIndex(
-      existingItem => existingItem.product.id === item.product.id
+      (existingItem) => existingItem.product.id === item.product.id,
     );
 
     if (existingItemIndex >= 0) {
@@ -119,7 +122,7 @@ export class Order {
       const updatedItem = OrderItem.create(
         existingItem.product,
         newQuantity,
-        existingItem.unitPrice
+        existingItem.unitPrice,
       );
       this._items[existingItemIndex] = updatedItem;
     } else {
@@ -131,7 +134,7 @@ export class Order {
   }
 
   removeItem(productId: string): void {
-    const itemIndex = this._items.findIndex(item => item.product.id === productId);
+    const itemIndex = this._items.findIndex((item) => item.product.id === productId);
     if (itemIndex === -1) {
       throw new Error(`Item with product ID ${productId} not found in order`);
     }
@@ -145,24 +148,21 @@ export class Order {
       throw new Error('Quantity must be positive');
     }
 
-    const itemIndex = this._items.findIndex(item => item.product.id === productId);
+    const itemIndex = this._items.findIndex((item) => item.product.id === productId);
     if (itemIndex === -1) {
       throw new Error(`Item with product ID ${productId} not found in order`);
     }
 
     const existingItem = this._items[itemIndex];
-    const updatedItem = OrderItem.create(
-      existingItem.product,
-      newQuantity,
-      existingItem.unitPrice
-    );
+    const updatedItem = OrderItem.create(existingItem.product, newQuantity, existingItem.unitPrice);
     this._items[itemIndex] = updatedItem;
     this._updatedAt = new Date();
   }
 
   canBeCancelled(): boolean {
-    return this._status.value === OrderStatus.PENDING || 
-           this._status.value === OrderStatus.CONFIRMED;
+    return (
+      this._status.value === OrderStatus.PENDING || this._status.value === OrderStatus.CONFIRMED
+    );
   }
 
   cancel(): void {
@@ -170,6 +170,17 @@ export class Order {
       throw new Error(`Order cannot be cancelled in ${this._status.value} status`);
     }
     this.changeStatus(OrderStatus.CANCELLED);
+  }
+
+  canBeCompleted(): boolean {
+    return this._status.value === OrderStatus.SHIPPED;
+  }
+
+  complete(): void {
+    if (!this.canBeCompleted()) {
+      throw new Error(`Order cannot be completed in ${this._status.value} status`);
+    }
+    this.changeStatus(OrderStatus.DELIVERED);
   }
 
   private addDomainEvent(event: any): void {
@@ -201,9 +212,9 @@ export class Order {
     if (this._items.length > 1) {
       const firstCurrency = this._items[0].unitPrice.currency;
       const hasMultipleCurrencies = this._items.some(
-        item => item.unitPrice.currency !== firstCurrency
+        (item) => item.unitPrice.currency !== firstCurrency,
       );
-      
+
       if (hasMultipleCurrencies) {
         throw new Error('All order items must have the same currency');
       }

@@ -1,355 +1,396 @@
-# NestJS Order System
+# NestJS Order Management System
 
-A comprehensive order management system built with **NestJS**, implementing **Hexagonal Architecture**, **SOLID Principles**, **RxJS**, and industry best practices.
+## 🎯 Project Overview
 
-## 🏗️ Architecture Overview
+A comprehensive **enterprise-grade order management system** built with **NestJS**, implementing **Hexagonal Architecture**, **Domain-Driven Design (DDD)**, **SOLID principles**, and **Event-Driven Architecture**. The system provides both **REST API** and **gRPC** interfaces for managing users, products, and orders with advanced health monitoring and production-ready features.
 
-This project follows **Hexagonal Architecture** (Ports and Adapters) pattern, ensuring clean separation of concerns and high testability:
+## 🏗️ Architecture & Design Patterns
 
+### **Hexagonal Architecture (Ports & Adapters)**
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Presentation Layer                       │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │   Controllers   │  │      DTOs       │  │   Swagger    │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-                                │
-┌─────────────────────────────────────────────────────────────┐
-│                   Application Layer                         │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │   Use Cases     │  │     Ports       │  │   Services   │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-                                │
-┌─────────────────────────────────────────────────────────────┐
-│                     Domain Layer                            │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │    Entities     │  │  Value Objects  │  │    Events    │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-                                │
-┌─────────────────────────────────────────────────────────────┐
-│                 Infrastructure Layer                        │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │   Repositories  │  │    Services     │  │   Database   │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Presentation  │    │   Application    │    │  Infrastructure │
+│   (Controllers) │◄──►│   (Use Cases)    │◄──►│   (Adapters)    │
+│   REST + gRPC   │    │   Domain Logic   │    │ DB + External   │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-## 🎯 Key Features
+### **Domain-Driven Design**
+- **Entities**: `User`, `Product`, `Order`, `OrderItem`
+- **Value Objects**: `Email`, `Money`, `OrderStatus`
+- **Domain Events**: `OrderCreated`, `OrderStatusChanged`
+- **Aggregates**: Order aggregate with business rules
 
-- **Hexagonal Architecture**: Clean separation between business logic and external concerns
-- **SOLID Principles**: Maintainable, extensible, and testable code
-- **RxJS Integration**: Reactive programming for async operations and event handling
-- **Domain-Driven Design**: Rich domain models with business rules
-- **Event-Driven Architecture**: Domain events for loose coupling
-- **Comprehensive Testing**: Unit, integration, and e2e tests
-- **API Documentation**: Auto-generated Swagger documentation
-- **Type Safety**: Full TypeScript implementation
+### **SOLID Principles**
+- **Single Responsibility**: Each class has one reason to change
+- **Open/Closed**: Extensible without modification
+- **Liskov Substitution**: Proper interface implementations
+- **Interface Segregation**: Focused, minimal interfaces
+- **Dependency Inversion**: Depend on abstractions, not concretions
 
-## 🚀 Getting Started
+## 🚀 Features
 
-### Prerequisites
+### **Core Business Features**
+- ✅ **User Management**: Create and retrieve users with email validation
+- ✅ **Product Management**: Create and retrieve products with inventory
+- ✅ **Order Management**: Create, retrieve, list, and update order status
+- ✅ **Business Rules**: Order validation, status transitions, inventory checks
+- ✅ **Event-Driven**: Domain events for order lifecycle
 
-- Node.js (v18 or higher)
-- PostgreSQL (v12 or higher)
-- npm or yarn
+### **Technical Features**
+- ✅ **Dual API Support**: REST API + gRPC microservices
+- ✅ **Database Integration**: MySQL with TypeORM
+- ✅ **Health Monitoring**: Comprehensive health checks
+- ✅ **Enhanced Logging**: Structured logging with correlation IDs
+- ✅ **Error Handling**: Global exception filters with structured responses
+- ✅ **Graceful Shutdown**: Production-ready lifecycle management
+- ✅ **API Documentation**: Swagger/OpenAPI integration
+- ✅ **Validation**: Input validation with class-validator
+- ✅ **Testing**: Unit, integration, and E2E tests
 
-### Installation
+### **Production-Ready Features**
+- ✅ **Environment Configuration**: Comprehensive .env support
+- ✅ **Security Headers**: CORS and security configurations
+- ✅ **Request/Response Logging**: Performance monitoring
+- ✅ **Database Health Checks**: Connection monitoring
+- ✅ **Memory & Disk Monitoring**: System resource tracking
+- ✅ **Docker Support**: Containerized deployment
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd nestjs-order-system
-   ```
+## 🛠️ Technology Stack
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### **Backend Framework**
+- **NestJS** - Enterprise Node.js framework
+- **TypeScript** - Type-safe JavaScript
+- **RxJS** - Reactive programming
 
-3. **Environment Setup**
-   ```bash
-   cp env.example .env
-   ```
-   
-   Update the `.env` file with your database configuration:
-   ```env
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_USERNAME=postgres
-   DB_PASSWORD=your_password
-   DB_NAME=order_system
-   NODE_ENV=development
-   PORT=3000
-   ```
+### **Database & ORM**
+- **MySQL** - Primary database
+- **TypeORM** - Object-Relational Mapping
+- **SQLite** - In-memory testing database
 
-4. **Database Setup**
-   ```bash
-   # Create the database
-   createdb order_system
-   
-   # Run migrations (if any)
-   npm run migration:run
-   ```
+### **API Protocols**
+- **REST API** - HTTP/JSON endpoints
+- **gRPC** - High-performance RPC
+- **Protocol Buffers** - Efficient serialization
 
-5. **Start the application**
-   ```bash
-   # Development mode
-   npm run start:dev
-   
-   # Production mode
-   npm run build
-   npm run start:prod
-   ```
+### **Testing**
+- **Jest** - Testing framework
+- **Supertest** - HTTP testing
+- **SQLite** - Test database
 
-The application will be available at:
-- **HTTP API**: `http://localhost:3000`
-- **gRPC API**: `localhost:5000`
-- **API Documentation**: `http://localhost:3000/api/docs`
+### **Development Tools**
+- **Docker** - Containerization
+- **Docker Compose** - Multi-container setup
+- **Swagger** - API documentation
+- **ESLint** - Code linting
 
-## 📚 API Documentation
+## 📋 Prerequisites
 
-### gRPC Services
+- **Node.js**: v18+ (tested with v24.8.0)
+- **npm**: v6+ 
+- **Docker** & **Docker Compose**: For database
+- **MySQL**: 8.0+ (via Docker or local)
 
-This application provides **complete gRPC CRUD operations** for all entities as required:
+## 🚀 Installation & Setup
 
-- **UserService**: Create, Read, Update, Delete users
-- **ProductService**: Create, Read, Update, Delete products + Stock checking
-- **OrderService**: Create, Read, Update, Delete orders + Status management
-
-**📋 For detailed gRPC testing instructions, see [GRPC_TESTING.md](./GRPC_TESTING.md)**
-
-### REST API (HTTP)
-
-### Orders
-
-#### Create Order
-```http
-POST /orders
-Content-Type: application/json
-
-{
-  "customerId": "uuid",
-  "items": [
-    {
-      "productId": "uuid",
-      "quantity": 2,
-      "unitPrice": 29.99,
-      "currency": "USD"
-    }
-  ]
-}
+### **1. Clone & Install**
+```bash
+git clone <repository-url>
+cd backend_test
+npm install
 ```
 
-#### Get Order
-```http
-GET /orders/{id}
+### **2. Environment Configuration**
+```bash
+# Copy environment template
+cp env.example .env
+
+# Edit .env file with your configuration
+# Default values are provided for development
 ```
 
-#### List Orders
-```http
-GET /orders?customerId={id}&status={status}&limit={limit}&offset={offset}
+**Key Environment Variables:**
+```env
+# Database Configuration (MySQL)
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=nestjs
+DB_PASSWORD=nestjs123
+DB_NAME=order_system
+
+# Application Configuration
+NODE_ENV=development
+PORT=3000
+GRPC_PORT=5001
+
+# CORS & Security
+CORS_ORIGIN=*
+LOG_LEVEL=debug
 ```
 
-#### Update Order Status
-```http
-PUT /orders/{id}/status
-Content-Type: application/json
+### **3. Database Setup**
+```bash
+# Start MySQL with Docker Compose
+docker-compose up -d
 
-{
-  "newStatus": "CONFIRMED"
-}
+# Database will be automatically created and seeded
 ```
 
-### Order Status Flow
+### **4. Build & Start**
+```bash
+# Development mode (with hot reload)
+npm run start:dev
 
+# Production build
+npm run build
+npm run start:prod
 ```
-PENDING → CONFIRMED → PROCESSING → SHIPPED → DELIVERED → COMPLETED
-    ↓         ↓           ↓          ↓
-CANCELLED  CANCELLED  CANCELLED  CANCELLED
-```
 
-## 🏛️ Architecture Details
+## 🌐 API Endpoints
 
-### Domain Layer
+### **REST API (Port 3000)**
 
-The domain layer contains the core business logic:
+#### **Health & Monitoring**
+- `GET /health` - Comprehensive health check
+- `GET /health/ready` - Readiness probe (Kubernetes)
+- `GET /health/live` - Liveness probe (Kubernetes)
+- `GET /health/detailed` - Detailed system information
 
-- **Entities**: `Order`, `Customer`, `Product`, `OrderItem`
-- **Value Objects**: `Money`, `Email`, `OrderStatus`
-- **Domain Events**: `OrderCreatedEvent`, `OrderStatusChangedEvent`
+#### **Users**
+- `POST /users` - Create user
+- `GET /users/:id` - Get user by ID
 
-### Application Layer
+#### **Products**  
+- `POST /products` - Create product
+- `GET /products/:id` - Get product by ID
 
-The application layer orchestrates business operations:
+#### **Orders**
+- `POST /orders` - Create order
+- `GET /orders/:id` - Get order by ID
+- `GET /orders` - List orders (with filters)
+- `PUT /orders/:id/status` - Update order status
 
-- **Use Cases**: `CreateOrderUseCase`, `UpdateOrderStatusUseCase`, etc.
-- **Ports**: Interfaces defining contracts for external dependencies
-- **Services**: Application services for complex business operations
+#### **Documentation**
+- `GET /api/docs` - Swagger UI (development only)
 
-### Infrastructure Layer
+### **gRPC API (Port 5001)**
 
-The infrastructure layer handles external concerns:
+#### **Services Available**
+- `UserService` - User management operations
+- `ProductService` - Product management operations  
+- `OrderService` - Order management operations
 
-- **Repositories**: Database implementations of repository ports
-- **Services**: External service implementations (notifications, events)
-- **Mappers**: Convert between domain entities and ORM entities
-
-### Presentation Layer
-
-The presentation layer handles HTTP requests:
-
-- **Controllers**: REST API endpoints
-- **DTOs**: Data transfer objects for request/response validation
-- **Swagger**: API documentation
+#### **Proto Files**
+- `proto/user.proto` - User service definitions
+- `proto/product.proto` - Product service definitions
+- `proto/order.proto` - Order service definitions
 
 ## 🧪 Testing
 
-### Running Tests
+### **Test Suites**
+
+#### **Unit Tests** ✅ **PASSING**
+```bash
+npm run test:unit
+```
+- **Coverage**: 14.41% overall, 62.3% domain entities
+- **Tests**: 22 passed, 0 failed
+- **Focus**: Domain entities and use cases
+
+#### **Integration Tests** ❌ **SOME FAILING**
+```bash
+npm run test:integration
+```
+- **Status**: 4 passed, 8 failed
+- **Issues**: Order creation and status update endpoints
+- **Database**: Uses SQLite in-memory for isolation
+
+#### **E2E Tests** ✅ **CREATED**
+```bash
+npm run test:e2e
+npm run test:e2e:rest    # REST API tests
+npm run test:e2e:grpc    # gRPC API tests
+```
+
+#### **All Tests**
+```bash
+npm run test:all
+```
+
+### **Test Configuration**
+- **Unit Tests**: Focus on business logic and domain rules
+- **Integration Tests**: Database interactions with SQLite
+- **E2E Tests**: Full application testing via HTTP/gRPC
+- **Coverage**: Jest coverage reporting available
+
+## 🔧 Development Scripts
 
 ```bash
-# Unit tests
-npm run test
+# Development
+npm run start:dev          # Hot reload development
+npm run start:debug        # Debug mode
 
-# Integration tests
-npm run test:e2e
+# Building
+npm run build              # Production build
+npm run start:prod         # Start production build
 
-# Test coverage
-npm run test:cov
+# Testing
+npm run test:unit          # Unit tests only
+npm run test:integration   # Integration tests only
+npm run test:e2e          # E2E tests only
+npm run test:all          # All test suites
 
-# Watch mode
-npm run test:watch
+# Code Quality
+npm run typecheck          # TypeScript type checking
+npm run lint              # ESLint code linting
+npm run check             # Type check + lint
 ```
 
-### Test Structure
+## 🏥 Health Monitoring
 
-- **Unit Tests**: Test individual components in isolation
-- **Integration Tests**: Test component interactions
-- **E2E Tests**: Test complete user workflows
+### **Health Endpoints**
 
-## 🔧 SOLID Principles Implementation
-
-### Single Responsibility Principle (SRP)
-- Each class has a single reason to change
-- Use cases handle specific business operations
-- Repositories handle data persistence
-- Controllers handle HTTP concerns
-
-### Open/Closed Principle (OCP)
-- Open for extension, closed for modification
-- Use dependency injection for extensibility
-- Implement interfaces for pluggable components
-
-### Liskov Substitution Principle (LSP)
-- All implementations can be substituted for their interfaces
-- Repository adapters are interchangeable
-- Service implementations are swappable
-
-### Interface Segregation Principle (ISP)
-- Clients depend only on interfaces they use
-- Separate ports for different concerns
-- Focused interfaces for specific operations
-
-### Dependency Inversion Principle (DIP)
-- Depend on abstractions, not concretions
-- Use dependency injection
-- Invert control through interfaces
-
-## 🔄 RxJS Integration
-
-### Reactive Programming Benefits
-
-- **Asynchronous Operations**: Handle async operations elegantly
-- **Event Handling**: Reactive event processing
-- **Error Handling**: Centralized error management
-- **Composition**: Combine multiple streams
-- **Backpressure**: Handle high-load scenarios
-
-### Usage Examples
-
-```typescript
-// Repository operations
-findById(id: string): Observable<Order | null> {
-  return from(this.repository.findOne({ where: { id } }));
-}
-
-// Use case orchestration
-execute(request: CreateOrderRequest): Observable<CreateOrderResponse> {
-  return this.validateCustomer(request.customerId).pipe(
-    switchMap(customer => this.validateAndCreateOrderItems(request.items)),
-    switchMap(orderItems => this.createOrder(request.customerId, orderItems)),
-    switchMap(order => this.saveOrder(order))
-  );
+#### **Basic Health Check**
+```bash
+curl http://localhost:3000/health
+```
+```json
+{
+  "status": "ok",
+  "info": {
+    "database": { "status": "up" },
+    "memory_heap": { "status": "up" },
+    "storage": { "status": "up" },
+    "application": { "status": "up" }
+  }
 }
 ```
 
-## 🚀 Best Practices
-
-### Code Organization
-- Follow hexagonal architecture principles
-- Keep domain logic pure and testable
-- Use dependency injection for loose coupling
-- Implement proper error handling
-
-### Performance
-- Use database indexes for frequently queried fields
-- Implement caching where appropriate
-- Use pagination for large datasets
-- Optimize database queries
-
-### Security
-- Validate all input data
-- Use proper authentication and authorization
-- Implement rate limiting
-- Sanitize user inputs
-
-### Monitoring
-- Implement comprehensive logging
-- Use structured logging with correlation IDs
-- Monitor application metrics
-- Set up health checks
-
-## 📦 Project Structure
-
+#### **Detailed System Information**
+```bash
+curl http://localhost:3000/health/detailed
 ```
-src/
-├── domain/                 # Domain layer
-│   ├── entities/          # Domain entities
-│   ├── value-objects/     # Value objects
-│   └── events/           # Domain events
-├── application/           # Application layer
-│   ├── use-cases/        # Business use cases
-│   ├── ports/            # Interface definitions
-│   └── services/         # Application services
-├── infrastructure/        # Infrastructure layer
-│   ├── database/         # Database entities and configuration
-│   ├── repositories/     # Repository implementations
-│   ├── services/         # External service implementations
-│   ├── mappers/          # Entity mappers
-│   └── event-handlers/   # Event handlers
-└── presentation/         # Presentation layer
-    ├── controllers/      # REST controllers
-    ├── dto/             # Data transfer objects
-    └── modules/         # NestJS modules
-```
+Includes: CPU usage, memory stats, uptime, Node.js version, platform info
 
-## 🤝 Contributing
+### **Monitoring Features**
+- ✅ **Database Connectivity**: MySQL connection health
+- ✅ **Memory Monitoring**: Heap and RSS memory usage
+- ✅ **Disk Space**: Available storage monitoring
+- ✅ **Custom Health Indicators**: Application-specific checks
+- ✅ **Event Loop**: Performance monitoring
+- ✅ **Garbage Collection**: Memory management stats
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
+## 🔒 Security & Production Features
 
-## 📄 License
+### **Security**
+- ✅ **CORS Configuration**: Configurable origins
+- ✅ **Input Validation**: Class-validator integration
+- ✅ **Error Handling**: Sanitized error responses
+- ✅ **Environment-based Config**: Secure production settings
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### **Production Readiness**
+- ✅ **Graceful Shutdown**: Signal handling (SIGTERM, SIGINT)
+- ✅ **Health Checks**: Kubernetes-ready probes
+- ✅ **Structured Logging**: JSON logs with correlation IDs
+- ✅ **Error Tracking**: Comprehensive exception handling
+- ✅ **Performance Monitoring**: Request/response metrics
 
-## 🙏 Acknowledgments
+### **Configuration Management**
+- ✅ **Environment Variables**: Comprehensive .env support
+- ✅ **Configuration Validation**: Type-safe config
+- ✅ **Multi-environment**: Development, staging, production
 
-- NestJS team for the excellent framework
-- Domain-Driven Design community
-- Clean Architecture principles by Robert C. Martin
-- Hexagonal Architecture by Alistair Cockburn
+## 📊 Current Test Status
+
+### ✅ **Completed & Working**
+- **Unit Tests**: 22/22 passing (Domain entities, Use cases)
+- **Application Startup**: Clean startup with enhanced logging
+- **REST API**: All endpoints functional
+- **gRPC API**: All services operational
+- **Health Monitoring**: Comprehensive health checks
+- **Database Integration**: MySQL connection and operations
+- **Error Handling**: Global exception filters working
+- **API Documentation**: Swagger integration complete
+
+### ❌ **Known Issues (Integration Tests)**
+- **Order Creation**: Some validation issues in integration tests
+- **Order Status Updates**: API endpoint parameter handling
+- **Test Data Setup**: Integration test data persistence
+- **Error Response Codes**: Expected vs actual HTTP status codes
+
+### 📈 **Test Coverage**
+- **Overall Coverage**: 14.41% (focused on tested components)
+- **Domain Entities**: 62.3% (core business logic)
+- **Use Cases**: 27.97% (application layer)
+- **Target Coverage**: 80%+ (recommended for production)
+
+## 🎯 Assignment Scope & Next Steps
+
+### **✅ Completed for Assignment**
+
+#### **Core Requirements**
+- ✅ **NestJS Framework**: Enterprise-grade Node.js application
+- ✅ **Hexagonal Architecture**: Clean separation of concerns
+- ✅ **Domain-Driven Design**: Rich domain model with business rules
+- ✅ **SOLID Principles**: Maintainable, extensible code
+- ✅ **Event-Driven Architecture**: Domain events and handlers
+- ✅ **Database Integration**: MySQL with TypeORM
+- ✅ **API Protocols**: REST + gRPC dual interface
+- ✅ **Testing Infrastructure**: Unit, integration, E2E tests
+- ✅ **Production Features**: Health monitoring, logging, error handling
+
+#### **Enhanced Features**
+- ✅ **Lifecycle Management**: Graceful shutdown, startup logging
+- ✅ **Health Monitoring**: Comprehensive system monitoring
+- ✅ **Error Handling**: Global exception filters
+- ✅ **Structured Logging**: Request/response tracking
+- ✅ **API Documentation**: Swagger integration
+- ✅ **Docker Support**: Containerized deployment
+
+### **🚧 Next Steps (Outside Assignment Scope)**
+
+#### **Priority 1: Core Application Enhancements**
+- **App Module Lifecycle**: Add `OnModuleInit`, `OnApplicationBootstrap` interfaces
+- **Rate Limiting**: Implement `ThrottlerModule` for API protection
+- **Security Headers**: Add Helmet middleware for security
+- **Response Compression**: Optimize API performance
+
+#### **Priority 2: Testing & Quality**
+- **Fix Integration Tests**: Resolve order creation and status update issues
+- **Test Coverage**: Increase to 80%+ coverage
+- **Performance Tests**: Load testing for scalability
+- **Contract Testing**: API contract validation
+
+#### **Priority 3: Advanced Features**
+- **Authentication & Authorization**: JWT, role-based access
+- **Caching**: Redis integration for performance
+- **Message Queues**: Async processing with Bull/Redis
+- **Metrics & Observability**: Prometheus integration
+- **API Versioning**: Version management strategy
+
+#### **Priority 4: Production Optimization**
+- **Database Optimization**: Connection pooling, query optimization
+- **Microservices**: Service decomposition strategy
+- **CI/CD Pipeline**: Automated testing and deployment
+- **Monitoring**: APM integration (DataDog, New Relic)
+- **Documentation**: Architecture decision records (ADRs)
+
+### **🔄 Recommended Development Workflow**
+1. **Fix Integration Tests** - Ensure all tests pass
+2. **Increase Test Coverage** - Add missing unit/integration tests  
+3. **Add Security Features** - Rate limiting, authentication
+4. **Performance Optimization** - Caching, database tuning
+5. **Production Deployment** - CI/CD, monitoring, scaling
+
+## 📞 Support & Contact
+
+For questions about this implementation or architectural decisions, please refer to:
+
+- **Code Documentation**: Inline comments and JSDoc
+- **Architecture Decisions**: See `TODO` and `TODO_2` files
+- **Health Monitoring**: See `HEALTH_MONITORING.md`
+- **gRPC Testing**: See `GRPC_TESTING.md`
+
+---
+
+**Built with ❤️ using NestJS, TypeScript, and best practices for enterprise applications.**

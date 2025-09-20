@@ -20,11 +20,11 @@ export interface ListOrdersResponse {
       productId: string;
       productName: string;
       quantity: number;
-      unitPrice: string;
-      subtotal: string;
+      unitPrice: number;
+      subtotal: number;
       currency: string;
     }[];
-    totalAmount: string;
+    totalAmount: number;
     currency: string;
     status: string;
     createdAt: Date;
@@ -38,7 +38,7 @@ export interface ListOrdersResponse {
 @Injectable()
 export class ListOrdersUseCase {
   constructor(
-    @Inject('OrderRepositoryPort') private readonly orderRepository: OrderRepositoryPort
+    @Inject('OrderRepositoryPort') private readonly orderRepository: OrderRepositoryPort,
   ) {}
 
   execute(request: ListOrdersRequest = {}): Observable<ListOrdersResponse> {
@@ -55,45 +55,53 @@ export class ListOrdersUseCase {
     return this.getAllOrders(limit, offset);
   }
 
-  private getOrdersByUser(userId: string, limit: number, offset: number): Observable<ListOrdersResponse> {
+  private getOrdersByUser(
+    userId: string,
+    limit: number,
+    offset: number,
+  ): Observable<ListOrdersResponse> {
     return this.orderRepository.findByUserId(userId).pipe(
-      switchMap(orders => {
+      switchMap((orders) => {
         const paginatedOrders = orders.slice(offset, offset + limit);
         return of({
-          orders: paginatedOrders.map(order => this.mapToSummary(order)),
+          orders: paginatedOrders.map((order) => this.mapToSummary(order)),
           total: orders.length,
           limit,
-          offset
+          offset,
         });
-      })
+      }),
     );
   }
 
-  private getOrdersByStatus(status: string, limit: number, offset: number): Observable<ListOrdersResponse> {
+  private getOrdersByStatus(
+    status: string,
+    limit: number,
+    offset: number,
+  ): Observable<ListOrdersResponse> {
     return this.orderRepository.findByStatus(status).pipe(
-      switchMap(orders => {
+      switchMap((orders) => {
         const paginatedOrders = orders.slice(offset, offset + limit);
         return of({
-          orders: paginatedOrders.map(order => this.mapToSummary(order)),
+          orders: paginatedOrders.map((order) => this.mapToSummary(order)),
           total: orders.length,
           limit,
-          offset
+          offset,
         });
-      })
+      }),
     );
   }
 
   private getAllOrders(limit: number, offset: number): Observable<ListOrdersResponse> {
     return this.orderRepository.findAll().pipe(
-      switchMap(orders => {
+      switchMap((orders) => {
         const paginatedOrders = orders.slice(offset, offset + limit);
         return of({
-          orders: paginatedOrders.map(order => this.mapToSummary(order)),
+          orders: paginatedOrders.map((order) => this.mapToSummary(order)),
           total: orders.length,
           limit,
-          offset
+          offset,
         });
-      })
+      }),
     );
   }
 
@@ -103,20 +111,19 @@ export class ListOrdersUseCase {
       userId: order.user.id,
       customerName: order.user.name,
       customerEmail: order.user.email.value,
-      items: order.items.map(item => ({
+      items: order.items.map((item) => ({
         productId: item.product.id,
         productName: item.product.name,
         quantity: item.quantity,
-        unitPrice: item.unitPrice.toString(),
-        subtotal: item.getSubtotal().toString(),
-        currency: item.unitPrice.currency
+        unitPrice: item.unitPrice.amount,
+        subtotal: item.getSubtotal().amount,
+        currency: item.unitPrice.currency,
       })),
-      totalAmount: order.getTotalAmount().toString(),
+      totalAmount: order.getTotalAmount().amount,
       currency: order.getTotalAmount().currency,
       status: order.status.toString(),
       createdAt: order.createdAt,
-      updatedAt: order.updatedAt
+      updatedAt: order.updatedAt,
     };
   }
 }
-

@@ -28,8 +28,7 @@ export class ProductMapper {
       productOrm.sku,
       productOrm.stock,
       productOrm.createdAt,
-      productOrm.updatedAt
+      productOrm.updatedAt,
     );
   }
 }
-

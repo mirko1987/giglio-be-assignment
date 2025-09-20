@@ -10,4 +10,3 @@ export interface ProductRepositoryPort {
   delete(id: string): Observable<void>;
   exists(id: string): Observable<boolean>;
 }
-

@@ -12,7 +12,7 @@ export abstract class DomainEvent {
   }
 
   abstract getAggregateId(): string;
-  
+
   getEventData(): any {
     return this;
   }

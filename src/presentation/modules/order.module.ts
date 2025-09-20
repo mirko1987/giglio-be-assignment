@@ -14,20 +14,10 @@ import { CreateOrderUseCase } from '../../application/use-cases/create-order.use
 import { UpdateOrderStatusUseCase } from '../../application/use-cases/update-order-status.use-case';
 import { GetOrderUseCase } from '../../application/use-cases/get-order.use-case';
 import { ListOrdersUseCase } from '../../application/use-cases/list-orders.use-case';
-import { OrderRepositoryPort } from '../../application/ports/order.repository.port';
-import { UserRepositoryPort } from '../../application/ports/user.repository.port';
-import { ProductRepositoryPort } from '../../application/ports/product.repository.port';
-import { EventPublisherPort } from '../../application/ports/event-publisher.port';
-import { NotificationPort } from '../../application/ports/notification.port';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      OrderOrmEntity,
-      OrderItemOrmEntity,
-      UserOrmEntity,
-      ProductOrmEntity,
-    ]),
+    TypeOrmModule.forFeature([OrderOrmEntity, OrderItemOrmEntity, UserOrmEntity, ProductOrmEntity]),
   ],
   controllers: [OrderController],
   providers: [
@@ -59,9 +49,6 @@ import { NotificationPort } from '../../application/ports/notification.port';
     GetOrderUseCase,
     ListOrdersUseCase,
   ],
-  exports: [
-    'OrderRepositoryPort',
-  ],
+  exports: ['OrderRepositoryPort'],
 })
 export class OrderModule {}
-

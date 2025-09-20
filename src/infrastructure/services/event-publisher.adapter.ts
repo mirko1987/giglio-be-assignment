@@ -12,19 +12,19 @@ export class EventPublisherAdapter implements EventPublisherPort {
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
   publish(event: DomainEvent): Observable<void> {
-    this.logger.log(`Publishing domain event: ${event.eventType} for aggregate: ${event.getAggregateId()}`);
-    
-    return from(
-      this.eventEmitter.emitAsync(event.eventType, event.getEventData())
-    ).pipe(
+    this.logger.log(
+      `Publishing domain event: ${event.eventType} for aggregate: ${event.getAggregateId()}`,
+    );
+
+    return from(this.eventEmitter.emitAsync(event.eventType, event.getEventData())).pipe(
       tap(() => {
         this.logger.log(`Successfully published event: ${event.eventType}`);
       }),
       map(() => undefined),
-      catchError(error => {
+      catchError((error) => {
         this.logger.error(`Failed to publish event: ${event.eventType}`, error);
         throw error;
-      })
+      }),
     );
   }
 
@@ -35,8 +35,8 @@ export class EventPublisherAdapter implements EventPublisherPort {
 
     this.logger.log(`Publishing ${events.length} domain events`);
 
-    const publishPromises = events.map(event => 
-      this.eventEmitter.emitAsync(event.eventType, event.getEventData())
+    const publishPromises = events.map((event) =>
+      this.eventEmitter.emitAsync(event.eventType, event.getEventData()),
     );
 
     return from(Promise.all(publishPromises)).pipe(
@@ -44,11 +44,10 @@ export class EventPublisherAdapter implements EventPublisherPort {
         this.logger.log(`Successfully published ${events.length} events`);
       }),
       map(() => undefined),
-      catchError(error => {
+      catchError((error) => {
         this.logger.error(`Failed to publish events`, error);
         throw error;
-      })
+      }),
     );
   }
 }
-

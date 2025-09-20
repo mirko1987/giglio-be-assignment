@@ -15,24 +15,16 @@ export class OrderMapper {
     orderOrm.createdAt = order.createdAt;
     orderOrm.updatedAt = order.updatedAt;
     orderOrm.user = UserMapper.toOrmEntity(order.user);
-    orderOrm.items = order.items.map(item => OrderItemMapper.toOrmEntity(item, order.id));
+    orderOrm.items = order.items.map((item) => OrderItemMapper.toOrmEntity(item, order.id));
     return orderOrm;
   }
 
   static toDomainEntity(orderOrm: OrderOrmEntity): Order {
     const user = UserMapper.toDomainEntity(orderOrm.user);
-    const items = orderOrm.items.map(itemOrm => OrderItemMapper.toDomainEntity(itemOrm));
+    const items = orderOrm.items.map((itemOrm) => OrderItemMapper.toDomainEntity(itemOrm));
     const statusEnum = OrderStatus[orderOrm.status as keyof typeof OrderStatus];
     const status = new OrderStatusVO(statusEnum);
 
-    return new Order(
-      orderOrm.id,
-      user,
-      items,
-      status,
-      orderOrm.createdAt,
-      orderOrm.updatedAt
-    );
+    return new Order(orderOrm.id, user, items, status, orderOrm.createdAt, orderOrm.updatedAt);
   }
 }
-

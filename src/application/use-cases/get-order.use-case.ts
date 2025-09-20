@@ -16,11 +16,11 @@ export interface GetOrderResponse {
     productId: string;
     productName: string;
     quantity: number;
-    unitPrice: string;
-    subtotal: string;
+    unitPrice: number;
+    subtotal: number;
     currency: string;
   }[];
-  totalAmount: string;
+  totalAmount: number;
   currency: string;
   status: string;
   createdAt: Date;
@@ -30,23 +30,23 @@ export interface GetOrderResponse {
 @Injectable()
 export class GetOrderUseCase {
   constructor(
-    @Inject('OrderRepositoryPort') private readonly orderRepository: OrderRepositoryPort
+    @Inject('OrderRepositoryPort') private readonly orderRepository: OrderRepositoryPort,
   ) {}
 
   execute(request: GetOrderRequest): Observable<GetOrderResponse> {
     return this.findOrder(request.orderId).pipe(
-      switchMap(order => of(this.mapToResponse(order)))
+      switchMap((order) => of(this.mapToResponse(order))),
     );
   }
 
   private findOrder(orderId: string): Observable<Order> {
     return this.orderRepository.findById(orderId).pipe(
-      switchMap(order => {
+      switchMap((order) => {
         if (!order) {
           return throwError(() => new Error(`Order with ID ${orderId} not found`));
         }
         return of(order);
-      })
+      }),
     );
   }
 
@@ -56,20 +56,19 @@ export class GetOrderUseCase {
       userId: order.user.id,
       customerName: order.user.name,
       customerEmail: order.user.email.value,
-      items: order.items.map(item => ({
+      items: order.items.map((item) => ({
         productId: item.product.id,
         productName: item.product.name,
         quantity: item.quantity,
-        unitPrice: item.unitPrice.toString(),
-        subtotal: item.getSubtotal().toString(),
-        currency: item.unitPrice.currency
+        unitPrice: item.unitPrice.amount,
+        subtotal: item.getSubtotal().amount,
+        currency: item.unitPrice.currency,
       })),
-      totalAmount: order.getTotalAmount().toString(),
+      totalAmount: order.getTotalAmount().amount,
       currency: order.getTotalAmount().currency,
       status: order.status.toString(),
       createdAt: order.createdAt,
-      updatedAt: order.updatedAt
+      updatedAt: order.updatedAt,
     };
   }
 }
-

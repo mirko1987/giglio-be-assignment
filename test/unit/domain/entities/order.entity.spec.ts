@@ -19,7 +19,7 @@ describe('Order Entity', () => {
       'Test Description',
       new Money(29.99, 'USD'),
       'TEST-SKU-001',
-      10
+      10,
     );
     orderItem = OrderItem.create(product, 2, new Money(29.99, 'USD'));
     order = Order.create(user, [orderItem]);
@@ -31,25 +31,25 @@ describe('Order Entity', () => {
       expect(order.id).toBeDefined();
       expect(order.user).toBe(user);
       expect(order.items).toHaveLength(1);
-      expect(order.status).toBe(OrderStatus.PENDING);
+      expect(order.status.value).toBe(OrderStatus.PENDING);
       expect(order.getTotalAmount().amount).toBe(59.98);
     });
 
-    it('should throw error when creating order without customer', () => {
+    it('should throw error when creating order without user', () => {
       expect(() => {
         new Order('test-id', null as any, [orderItem]);
-      }).toThrow('Customer is required');
+      }).toThrow('Order user is required');
     });
 
     it('should throw error when creating order without items', () => {
       expect(() => {
-        new Order('test-id', customer, []);
+        new Order('test-id', user, []);
       }).toThrow('Order must have at least one item');
     });
 
     it('should throw error when creating order with null items', () => {
       expect(() => {
-        new Order('test-id', customer, null as any);
+        new Order('test-id', user, null as any);
       }).toThrow('Order must have at least one item');
     });
   });
@@ -57,44 +57,52 @@ describe('Order Entity', () => {
   describe('Order Status Management', () => {
     it('should change status from PENDING to CONFIRMED', () => {
       order.changeStatus(OrderStatus.CONFIRMED);
-      expect(order.status).toBe(OrderStatus.CONFIRMED);
+      expect(order.status.value).toBe(OrderStatus.CONFIRMED);
     });
 
-    it('should not change status if new status is the same', () => {
-      const initialStatus = order.status;
-      order.changeStatus(OrderStatus.PENDING);
-      expect(order.status).toBe(initialStatus);
+    it('should not allow invalid status transitions', () => {
+      expect(() => {
+        order.changeStatus(OrderStatus.DELIVERED);
+      }).toThrow('Cannot transition from PENDING to DELIVERED');
     });
 
     it('should allow cancellation when status is PENDING', () => {
       expect(order.canBeCancelled()).toBe(true);
       order.cancel();
-      expect(order.status).toBe(OrderStatus.CANCELLED);
+      expect(order.status.value).toBe(OrderStatus.CANCELLED);
     });
 
     it('should allow cancellation when status is CONFIRMED', () => {
       order.changeStatus(OrderStatus.CONFIRMED);
       expect(order.canBeCancelled()).toBe(true);
       order.cancel();
-      expect(order.status).toBe(OrderStatus.CANCELLED);
+      expect(order.status.value).toBe(OrderStatus.CANCELLED);
     });
 
     it('should not allow cancellation when status is SHIPPED', () => {
+      // First transition to SHIPPED through valid states
+      order.changeStatus(OrderStatus.CONFIRMED);
+      order.changeStatus(OrderStatus.PROCESSING);
+      order.changeStatus(OrderStatus.PAID);
       order.changeStatus(OrderStatus.SHIPPED);
       expect(order.canBeCancelled()).toBe(false);
       expect(() => order.cancel()).toThrow();
     });
 
     it('should allow completion when status is SHIPPED', () => {
+      // First transition to SHIPPED through valid states
+      order.changeStatus(OrderStatus.CONFIRMED);
+      order.changeStatus(OrderStatus.PROCESSING);
+      order.changeStatus(OrderStatus.PAID);
       order.changeStatus(OrderStatus.SHIPPED);
-      expect(order.canBeCancelled()).toBe(true);
-      order.cancel();
-      expect(order.status).toBe(OrderStatus.DELIVERED);
+      expect(order.canBeCompleted()).toBe(true);
+      order.complete();
+      expect(order.status.value).toBe(OrderStatus.DELIVERED);
     });
 
     it('should not allow completion when status is PENDING', () => {
-      expect(order.canBeCancelled()).toBe(false);
-      expect(() => order.cancel()).toThrow();
+      expect(order.canBeCompleted()).toBe(false);
+      expect(() => order.complete()).toThrow('Order cannot be completed in PENDING status');
     });
   });
 
@@ -106,7 +114,7 @@ describe('Order Entity', () => {
     });
 
     it('should calculate total items correctly', () => {
-      const totalItems = order.items.length;
+      const totalItems = order.items.reduce((total, item) => total + item.quantity, 0);
       expect(totalItems).toBe(2);
     });
 
@@ -116,11 +124,11 @@ describe('Order Entity', () => {
         'Test Description 2',
         new Money(19.99, 'USD'),
         'TEST-SKU-002',
-        5
+        5,
       );
       const orderItem2 = OrderItem.create(product2, 1, new Money(19.99, 'USD'));
       const multiItemOrder = Order.create(user, [orderItem, orderItem2]);
-      
+
       expect(multiItemOrder.getTotalAmount().amount).toBe(79.97);
       expect(multiItemOrder.items.reduce((total, item) => total + item.quantity, 0)).toBe(3);
     });
@@ -130,16 +138,16 @@ describe('Order Entity', () => {
     it('should generate OrderCreated event on creation', () => {
       const events = order.domainEvents;
       expect(events).toHaveLength(1);
-      expect(events[0].eventType).toBe('OrderCreated');
+      expect(events[0].type).toBe('OrderCreated');
     });
 
     it('should generate OrderStatusChanged event on status change', () => {
       order.clearDomainEvents(); // Clear initial events
       order.changeStatus(OrderStatus.CONFIRMED);
-      
+
       const events = order.domainEvents;
       expect(events).toHaveLength(1);
-      expect(events[0].eventType).toBe('OrderStatusChanged');
+      expect(events[0].type).toBe('OrderStatusChanged');
     });
 
     it('should clear domain events', () => {
@@ -149,4 +157,3 @@ describe('Order Entity', () => {
     });
   });
 });
-

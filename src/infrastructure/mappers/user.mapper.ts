@@ -15,12 +15,6 @@ export class UserMapper {
   static toDomainEntity(userOrm: UserOrmEntity): User {
     const email = new Email(userOrm.email);
 
-    return new User(
-      userOrm.id,
-      email,
-      userOrm.name,
-      userOrm.createdAt
-    );
+    return new User(userOrm.id, email, userOrm.name, userOrm.createdAt);
   }
 }
-

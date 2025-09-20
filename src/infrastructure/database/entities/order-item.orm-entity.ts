@@ -22,7 +22,7 @@ export class OrderItemOrmEntity {
   @Column('varchar', { length: 3 })
   currency: string;
 
-  @ManyToOne(() => OrderOrmEntity, order => order.items, { onDelete: 'CASCADE' })
+  @ManyToOne(() => OrderOrmEntity, (order) => order.items, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'orderId' })
   order: OrderOrmEntity;
 
@@ -30,4 +30,3 @@ export class OrderItemOrmEntity {
   @JoinColumn({ name: 'productId' })
   product: ProductOrmEntity;
 }
-

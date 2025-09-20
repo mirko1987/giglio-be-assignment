@@ -18,30 +18,28 @@ export interface CreateUserResponse {
 
 @Injectable()
 export class CreateUserUseCase {
-  constructor(
-    @Inject('UserRepositoryPort') private readonly userRepository: UserRepositoryPort
-  ) {}
+  constructor(@Inject('UserRepositoryPort') private readonly userRepository: UserRepositoryPort) {}
 
   execute(request: CreateUserRequest): Observable<CreateUserResponse> {
     return this.validateEmailUniqueness(request.email).pipe(
       switchMap(() => this.createUser(request)),
-      switchMap(user => this.saveUser(user)),
-      switchMap(user => of(this.mapToResponse(user))),
-      catchError(error => {
+      switchMap((user) => this.saveUser(user)),
+      switchMap((user) => of(this.mapToResponse(user))),
+      catchError((error) => {
         console.error('Error in CreateUserUseCase:', error);
         return throwError(() => new Error(`Failed to create user: ${error.message}`));
-      })
+      }),
     );
   }
 
   private validateEmailUniqueness(email: string): Observable<void> {
     return this.userRepository.findByEmail(email).pipe(
-      switchMap(existingUser => {
+      switchMap((existingUser) => {
         if (existingUser) {
           return throwError(() => new Error(`User with email ${email} already exists`));
         }
         return of(void 0);
-      })
+      }),
     );
   }
 
@@ -64,8 +62,7 @@ export class CreateUserUseCase {
       userId: user.id,
       name: user.name,
       email: user.email.value,
-      createdAt: user.createdAt
+      createdAt: user.createdAt,
     };
   }
 }
-

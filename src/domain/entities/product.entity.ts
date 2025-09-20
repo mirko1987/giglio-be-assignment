@@ -19,7 +19,7 @@ export class Product {
     sku: string,
     stock: number,
     createdAt?: Date,
-    updatedAt?: Date
+    updatedAt?: Date,
   ) {
     this._id = id;
     this._name = name;
@@ -38,7 +38,7 @@ export class Product {
     description: string,
     price: Money,
     sku: string,
-    stock: number
+    stock: number,
   ): Product {
     const id = crypto.randomUUID();
     return new Product(id, name, description, price, sku, stock);

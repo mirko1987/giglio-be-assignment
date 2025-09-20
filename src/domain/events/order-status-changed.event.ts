@@ -6,7 +6,7 @@ export class OrderStatusChangedEvent extends DomainEvent {
     public readonly orderId: string,
     public readonly oldStatus: OrderStatus,
     public readonly newStatus: OrderStatus,
-    public readonly userId?: string
+    public readonly userId?: string,
   ) {
     super('OrderStatusChanged');
   }

@@ -14,4 +14,3 @@ export class UserOrmEntity {
   @CreateDateColumn()
   createdAt: Date;
 }
-

@@ -6,7 +6,7 @@ export enum OrderStatus {
   SHIPPED = 'SHIPPED',
   DELIVERED = 'DELIVERED',
   CANCELLED = 'CANCELLED',
-  REFUNDED = 'REFUNDED'
+  REFUNDED = 'REFUNDED',
 }
 
 export class OrderStatusVO {
@@ -20,7 +20,9 @@ export class OrderStatusVO {
   static fromString(status: string): OrderStatusVO {
     const upperStatus = status.toUpperCase();
     if (!Object.values(OrderStatus).includes(upperStatus as OrderStatus)) {
-      throw new Error(`Invalid order status: ${status}. Valid statuses are: ${Object.values(OrderStatus).join(', ')}`);
+      throw new Error(
+        `Invalid order status: ${status}. Valid statuses are: ${Object.values(OrderStatus).join(', ')}`,
+      );
     }
     return new OrderStatusVO(upperStatus as OrderStatus);
   }
@@ -44,7 +46,7 @@ export class OrderStatusVO {
       [OrderStatus.SHIPPED]: [OrderStatus.DELIVERED, OrderStatus.REFUNDED],
       [OrderStatus.DELIVERED]: [OrderStatus.REFUNDED],
       [OrderStatus.CANCELLED]: [],
-      [OrderStatus.REFUNDED]: []
+      [OrderStatus.REFUNDED]: [],
     };
 
     return transitions[this._value].includes(newStatus);

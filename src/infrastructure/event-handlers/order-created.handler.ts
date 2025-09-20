@@ -13,7 +13,7 @@ export class OrderCreatedHandler {
       this.logger.log(`Order created successfully: ${event.orderId}`);
       this.logger.log(`Customer: ${event.customerId}`);
       this.logger.log(`Total Amount: ${event.totalAmount.toString()}`);
-      
+
       // Here you could add additional business logic like:
       // - Update inventory
       // - Send analytics events
@@ -25,4 +25,3 @@ export class OrderCreatedHandler {
     }
   }
 }
-
