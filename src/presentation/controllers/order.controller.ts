@@ -10,6 +10,7 @@ import {
   HttpCode,
   UseInterceptors,
   ClassSerializerInterceptor,
+  HttpException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
@@ -85,7 +86,20 @@ export class OrderController {
           }) as OrderResponseDto,
       ),
       catchError((error) => {
-        throw new Error(`Failed to create order: ${error.message}`);
+        // Check if it's a user not found error
+        if (error.message && error.message.includes('User with ID') && error.message.includes('not found')) {
+          throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
+        }
+        // Check if it's a product not found error
+        if (error.message && error.message.includes('Product with ID') && error.message.includes('not found')) {
+          throw new HttpException(`Product not found`, HttpStatus.NOT_FOUND);
+        }
+        // Other validation errors
+        if (error.message && error.message.includes('validation')) {
+          throw new HttpException(`Validation error: ${error.message}`, HttpStatus.BAD_REQUEST);
+        }
+        // Generic error
+        throw new HttpException(`Failed to create order: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
       }),
     );
   }
@@ -121,7 +135,12 @@ export class OrderController {
           }) as OrderResponseDto,
       ),
       catchError((error) => {
-        throw new Error(`Failed to get order: ${error.message}`);
+        // Check if it's an order not found error
+        if (error.message && error.message.includes('Order with ID') && error.message.includes('not found')) {
+          throw new HttpException(`Order not found`, HttpStatus.NOT_FOUND);
+        }
+        // Generic error
+        throw new HttpException(`Failed to get order: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
       }),
     );
   }
@@ -208,7 +227,16 @@ export class OrderController {
         newStatus: response.status,
       })),
       catchError((error) => {
-        throw new Error(`Failed to update order status: ${error.message}`);
+        // Check if it's an order not found error
+        if (error.message && error.message.includes('Order with ID') && error.message.includes('not found')) {
+          throw new HttpException(`Order not found`, HttpStatus.NOT_FOUND);
+        }
+        // Check if it's an invalid status transition error
+        if (error.message && error.message.includes('Cannot transition')) {
+          throw new HttpException(`Invalid status transition: ${error.message}`, HttpStatus.BAD_REQUEST);
+        }
+        // Generic error
+        throw new HttpException(`Failed to update order status: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
       }),
     );
   }

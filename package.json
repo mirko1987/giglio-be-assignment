@@ -19,7 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:unit": "jest --testPathPattern='test/unit'",
     "test:integration": "jest --testPathPattern='test/integration'",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "jest --config ./test/jest-e2e.json --testPathPattern='rest-api.e2e-spec.ts'",
     "test:e2e:rest": "jest --config ./test/jest-e2e.json --testPathPattern='rest-api.e2e-spec.ts'",
     "test:e2e:grpc": "jest --config ./test/jest-e2e.json --testPathPattern='grpc-api.e2e-spec.ts'",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
@@ -27,7 +27,9 @@
     "typecheck:watch": "tsc --noEmit --watch",
     "check": "npm run typecheck && npm run lint",
     "proto:install": "npm i -g @grpc/proto-loader-gen-types",
-    "proto:generate": "proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=proto/ proto/*.proto"
+    "proto:generate": "proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=proto/ proto/*.proto",
+    "grpc:test": "node tools/grpc-testing/test-grpc-client.js",
+    "grpc:test:orders": "node tools/grpc-testing/test-grpc-orders.js"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.9.0",

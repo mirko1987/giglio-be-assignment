@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Inject,
+  HttpException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
@@ -67,7 +68,16 @@ export class UserController {
           }) as UserResponseDto,
       ),
       catchError((error) => {
-        throw new Error(`Failed to create user: ${error.message}`);
+        // Check if it's a validation error
+        if (error.message && (error.message.includes('Email format') || error.message.includes('validation'))) {
+          throw new HttpException(`Validation error: ${error.message}`, HttpStatus.BAD_REQUEST);
+        }
+        // Check if it's a duplicate user error
+        if (error.message && error.message.includes('already exists')) {
+          throw new HttpException(`User already exists: ${error.message}`, HttpStatus.CONFLICT);
+        }
+        // Generic error
+        throw new HttpException(`Failed to create user: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
       }),
     );
   }
@@ -98,7 +108,12 @@ export class UserController {
         } as UserResponseDto;
       }),
       catchError((error) => {
-        throw new Error(`Failed to get user: ${error.message}`);
+        // Check if it's a user not found error
+        if (error.message && error.message.includes('User with ID') && error.message.includes('not found')) {
+          throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
+        }
+        // Generic error
+        throw new HttpException(`Failed to get user: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
       }),
     );
   }
