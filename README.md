@@ -387,7 +387,6 @@ Includes: CPU usage, memory stats, uptime, Node.js version, platform info
 For questions about this implementation or architectural decisions, please refer to:
 
 - **Code Documentation**: Inline comments and JSDoc
-- **Architecture Decisions**: See `TODO` and `TODO_2` files
 - **Health Monitoring**: See `HEALTH_MONITORING.md`
 - **gRPC Testing**: See `GRPC_TESTING.md`
 
