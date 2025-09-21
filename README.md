@@ -2,7 +2,7 @@
 
 ## 🎯 Project Overview
 
-A comprehensive **enterprise-grade order management system** built with **NestJS**, implementing **Hexagonal Architecture**, **Domain-Driven Design (DDD)**, **SOLID principles**, and **Event-Driven Architecture**. The system provides both **REST API** and **gRPC** interfaces for managing users, products, and orders with advanced health monitoring and production-ready features.
+A comprehensive **enterprise grade order management system** built with **NestJS**, implementing **Hexagonal Architecture**, **Domain Driven Design (DDD)**, **SOLID principles**, and **Event Driven Architecture**. The system provides both **REST API** and **gRPC** interfaces for managing users, products, and orders with advanced health monitoring and production ready features.
 
 ## 🏗️ Architecture & Design Patterns
 
@@ -15,7 +15,7 @@ A comprehensive **enterprise-grade order management system** built with **NestJS
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-### **Domain-Driven Design**
+### **Domain Driven Design**
 - **Entities**: `User`, `Product`, `Order`, `OrderItem`
 - **Value Objects**: `Email`, `Money`, `OrderStatus`
 - **Domain Events**: `OrderCreated`, `OrderStatusChanged`
@@ -48,7 +48,7 @@ A comprehensive **enterprise-grade order management system** built with **NestJS
 - ✅ **Validation**: Input validation with class-validator
 - ✅ **Testing**: Unit, integration, and E2E tests
 
-### **Production-Ready Features**
+### **Production Ready Features**
 - ✅ **Environment Configuration**: Comprehensive .env support
 - ✅ **Security Headers**: CORS and security configurations
 - ✅ **Request/Response Logging**: Performance monitoring
@@ -59,30 +59,30 @@ A comprehensive **enterprise-grade order management system** built with **NestJS
 ## 🛠️ Technology Stack
 
 ### **Backend Framework**
-- **NestJS** - Enterprise Node.js framework
-- **TypeScript** - Type-safe JavaScript
-- **RxJS** - Reactive programming
+- **NestJS**  Enterprise Node.js framework
+- **TypeScript**  Type safe JavaScript
+- **RxJS**  Reactive programming
 
 ### **Database & ORM**
-- **MySQL** - Primary database
-- **TypeORM** - Object-Relational Mapping
-- **SQLite** - In-memory testing database
+- **MySQL**  Primary database
+- **TypeORM**  Object Relational Mapping
+- **SQLite**  In memory testing database
 
 ### **API Protocols**
-- **REST API** - HTTP/JSON endpoints
-- **gRPC** - High-performance RPC
-- **Protocol Buffers** - Efficient serialization
+- **REST API**  HTTP/JSON endpoints
+- **gRPC**  High performance RPC
+- **Protocol Buffers**   Efficient serialization
 
 ### **Testing**
-- **Jest** - Testing framework
-- **Supertest** - HTTP testing
-- **SQLite** - Test database
+- **Jest**  Testing framework
+- **Supertest**   HTTP testing
+- **SQLite**  Test database
 
 ### **Development Tools**
-- **Docker** - Containerization
-- **Docker Compose** - Multi-container setup
-- **Swagger** - API documentation
-- **ESLint** - Code linting
+- **Docker**   Containerization
+- **Docker Compose**   Multi container setup
+- **Swagger**   API documentation
+- **ESLint**   Code linting
 
 ## 📋 Prerequisites
 
@@ -151,39 +151,39 @@ npm run start:prod
 ### **REST API (Port 3000)**
 
 #### **Health & Monitoring**
-- `GET /health` - Comprehensive health check
-- `GET /health/ready` - Readiness probe (Kubernetes)
-- `GET /health/live` - Liveness probe (Kubernetes)
-- `GET /health/detailed` - Detailed system information
+- `GET /health`  Comprehensive health check
+- `GET /health/ready`  Readiness probe (Kubernetes)
+- `GET /health/live` Liveness probe (Kubernetes)
+- `GET /health/detailed`  Detailed system information
 
 #### **Users**
-- `POST /users` - Create user
-- `GET /users/:id` - Get user by ID
+- `POST /users`  Create user
+- `GET /users/:id`  Get user by ID
 
 #### **Products**  
-- `POST /products` - Create product
-- `GET /products/:id` - Get product by ID
+- `POST /products`  Create product
+- `GET /products/:id`  Get product by ID
 
 #### **Orders**
-- `POST /orders` - Create order
-- `GET /orders/:id` - Get order by ID
-- `GET /orders` - List orders (with filters)
-- `PUT /orders/:id/status` - Update order status
+- `POST /orders`  Create order
+- `GET /orders/:id`  Get order by ID
+- `GET /orders`  List orders (with filters)
+- `PUT /orders/:id/status` Update order status
 
 #### **Documentation**
-- `GET /api/docs` - Swagger UI (development only)
+- `GET /api/docs` Swagger UI (development only)
 
 ### **gRPC API (Port 5001)**
 
 #### **Services Available**
-- `UserService` - User management operations
-- `ProductService` - Product management operations  
-- `OrderService` - Order management operations
+- `UserService`  User management operations
+- `ProductService`  Product management operations  
+- `OrderService` Order management operations
 
 #### **Proto Files**
-- `proto/user.proto` - User service definitions
-- `proto/product.proto` - Product service definitions
-- `proto/order.proto` - Order service definitions
+- `proto/user.proto`  User service definitions
+- `proto/product.proto`  Product service definitions
+- `proto/order.proto` Order service definitions
 
 ## 🧪 Testing
 
@@ -203,7 +203,7 @@ npm run test:integration
 ```
 - **Status**: 12 passed, 0 failed
 - **Coverage**: Complete order management workflow testing
-- **Database**: Uses SQLite in-memory for isolation
+- **Database**: Uses SQLite in memory for isolation
 
 #### **E2E Tests** ✅ **REST API COMPLETE**
 ```bash
@@ -212,7 +212,7 @@ npm run test:e2e:rest    # REST API E2E tests
 - **Status**: 22 passed, 0 failed
 - **Coverage**: Complete REST API workflow testing
 - **Features**: User/Product/Order management, validation, error handling
-- **Database**: Uses SQLite in-memory for test isolation
+- **Database**: Uses SQLite in memory for test isolation
 
 #### **All Tests**
 ```bash
